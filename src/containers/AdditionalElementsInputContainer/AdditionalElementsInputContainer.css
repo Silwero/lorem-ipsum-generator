@@ -1,0 +1,16 @@
+.additional-elements {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.additional-elements > p {
+  text-align: center;
+  font-size: .9rem;
+  color: #f16363;
+  flex: 1 1 100%;
+  margin-top: 0;
+}
+
+.additional-elements > div {
+  flex: 0 1 33.3333%;
+}

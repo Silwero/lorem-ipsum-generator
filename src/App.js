@@ -6,22 +6,36 @@ import Blockquote from './components/Outputs/Blockquote';
 import Header from './components/Outputs/Header';
 import Ul from './components/Outputs/Ul';
 import Ol from './components/Outputs/Ol';
+import createLi from './components/Outputs/Li';
 import Image from './components/Outputs/Image';
-import allElements from './components/Outputs/AllElements/AllElements';
+import allElements from './components/Outputs/AllElements/AllElementsNew';
 
-import Mark from './components/functionalComponents/mark';
+import Mark from './components/functionalComponents/mark/mark';
+import createText from './components/functionalComponents/CreateText/CreateText';
 
 import InputContainer from './containers/InputContainer/InputContainer';
-
-const loremIpsum = require('lorem-ipsum');
+import AdditionalElementsInputContainer from './containers/AdditionalElementsInputContainer/AdditionalElementsInputContainer';
 
 class App extends Component {
   state = {
     items: [],
     copyed: false,
     elementsList: ['paragraph', 'ul', 'ol', 'blockquote', 'header', 'image'],
+    createAllList: ['h1', 'paragraph', 'ul', 'h2', 'blockquote', 'paragraph', 'h3', 'paragraph', 'image', 'paragraph', 'h4', 'paragraph', 'h5', 'paragraph', 'ol', 'h6', 'paragraph' ],
     elementsSwowed: false,
-    elementsHighlighted: false
+    elementsHighlighted: false,
+    additionalElements: {
+      strong: false,
+      i: false,
+      em: false,
+      abbr: false,
+      sup: false,
+      sub: false,
+      b: false,
+      a: false
+    },
+    isDisabledCounters: false,
+    isImage: false
   }
 
   componentDidMount() {
@@ -37,50 +51,42 @@ class App extends Component {
     let text;
     switch(item.type) {
       case 'paragraph':
-        text = loremIpsum({
+        text = createText({
           units: 'sentences',
-          sentenceLowerBound: parseInt(item.minLength, 10),
-          sentenceUpperBound: parseInt(item.maxLength, 10)
-        });
-        if (text === '.') {
-          text = "Lorem"
-        }
+          sentenceLowerBound: item.minLength,
+          sentenceUpperBound: item.maxLength
+        }, this.state.additionalElements);
         newEl = <Paragraph key={item.id}  text={text} />;
         break;
       case 'image':
         newEl = <Image key={item.id} width={item.width} height={item.height} altText='Some alt text' />;
         break;
       case 'blockquote':
-        text = loremIpsum({
+        text = createText({
           units: 'sentences',
           sentenceLowerBound: item.minLength,
           sentenceUpperBound: item.maxLength
-        });
-        if (text === '.') {
-          text = "Lorem"
-        }
+        }, this.state.additionalElements);
         newEl = <Blockquote key={item.id}  text={text} />;
         break;
       case 'header':
-        text = loremIpsum({
+        text = createText({
           units: 'sentences',
           sentenceLowerBound: item.minLength,
           sentenceUpperBound: item.maxLength
-        });
+        }, this.state.additionalElements);
         if (text === '.') {
           text = "Lorem"
         }
         newEl = <Header key={item.id} headerSize={item.headerSize} text={text} />;
         break;
       case 'ul':
-        newEl = <Ul key={item.id} items={
-          this.createListItems(item)
-        }/>;
+        const ulLi = createLi(item, this.state.additionalElements);
+        newEl = <Ul key={item.id} items={ulLi}/>;
         break;
       case 'ol':
-        newEl = <Ol key={item.id} items={
-          this.createListItems(item)
-        }/>;
+        const olLi = createLi(item, this.state.additionalElements);
+        newEl = <Ol key={item.id} items={olLi}/>;
         break;
       default: return;
     }
@@ -91,25 +97,7 @@ class App extends Component {
     });
   }
 
-  createListItems(item) {
-    let newListItems = [];
-
-    for (let i = 0; i < item.listItems; i++) {
-      let text = loremIpsum({
-          units: 'sentences',
-          sentenceLowerBound: item.minLength,
-          sentenceUpperBound: item.maxLength
-        });
-      if (text === '.') {
-        text = "Lorem"
-      }
-      newListItems.push(<li key={item.id + '-' + i}>{text}</li>);
-    }
-
-    return newListItems;
-  }
-
-  clearItems = () => {
+  clearElements = () => {
     this.setState({items: []});
   }
 
@@ -149,7 +137,7 @@ class App extends Component {
   }
 
   createAll = () => {
-    const newItems = [...this.state.items, allElements()];
+    const newItems = [...this.state.items, allElements(this.state.createAllList, this.state.additionalElements)];
     this.setState({items: newItems}, () => {
       this.pastToCopy();
     });
@@ -164,6 +152,30 @@ class App extends Component {
   highlightMarkToggle = () => {
     this.setState(prevState => {
       return {elementsHighlighted: !prevState.elementsHighlighted};
+    });
+  }
+
+  toggleAdditionalAdded = (target) => {
+    let newAdditionalElements = {
+      ...this.state.additionalElements
+    }
+    newAdditionalElements[target] = !this.state.additionalElements[target];
+
+    this.setState({
+      additionalElements: newAdditionalElements
+    });
+  }
+
+  removeLast = () => {
+    if (!this.state.items.length) return;
+
+    let newItems = [
+      ...this.state.items
+    ];
+    newItems.splice(-1, 1);
+
+    this.setState({items: newItems}, () => {
+      this.pastToCopy();
     });
   }
 
@@ -196,7 +208,10 @@ class App extends Component {
         <div className="container">
           <div className="row">
             <div className="col input-container">
-              <InputContainer createAll={this.createAll} elementsList={this.state.elementsList} clearItems={this.clearItems} addItem={(item) => this.addItem(item)} />
+              <div className="lorem-block">
+                <InputContainer isDisabled={this.state.isDisabledCounters} createAll={this.createAll} removeLast={this.removeLast} elementsList={this.state.elementsList} clearItems={this.clearElements} addItem={(item) => this.addItem(item)} />
+                <AdditionalElementsInputContainer isImage={this.state.isImage} change={this.toggleAdditionalAdded} elements={this.state.additionalElements} />
+              </div>
             </div>
             <div className="col output-container">
               <div className="wrapper" onClick={this.selectText}>

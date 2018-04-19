@@ -17,6 +17,13 @@ input[type="number"] {
   background-color: transparent;
 }
 
+input[type="text"]:disabled,
+input[type="number"]:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  background-color: #dadada;
+}
+
 .lorem-block-items {
   display: flex;
   margin: 0 -15px;
@@ -39,13 +46,19 @@ input[type="number"] {
   background: #fff;
   border-radius: 5px;
   box-shadow: 3px 3px 10px rgba(0,0,0,.3);
-  align-items: flex-end;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.buttons-wrapper {
+.lorem-block > div {
+  order: 1;
+}
+
+.lorem-block .buttons-wrapper {
   display: flex;
   flex-wrap: wrap;
+  order: 2;
 }
 
 .lorem-block .button {
@@ -59,14 +72,31 @@ input[type="number"] {
   transition: all .3s;
   border:  1px solid #000;
   flex: 1 1 33.3333%;
+  border-bottom: 0;
+}
+
+.lorem-block .button:first-child {
+  border-right-color: #fff
+}
+
+.lorem-block .clear,
+.lorem-block .add-all {
+  margin-top: 0;
+  flex: 1 1 100%;
+  border-top: 0;
+}
+
+.lorem-block .add-all {
+  border-color: #6ca006;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background-color: #6ca006;
 }
 
 .lorem-block .clear {
-  margin-top: 0;
-  flex: 1 1 100%;
   border-radius: 0 0 5px 5px;
   background-color: #f16363;
-  border-color: #f16363;
+  border: 1px solid #f16363;
 }
 
 .lorem-block .btn-right {

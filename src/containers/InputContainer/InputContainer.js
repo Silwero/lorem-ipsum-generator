@@ -17,9 +17,16 @@ export class InputContainer extends Component {
     id: 0
   }
 
-  checkNumber = (val) => {
-    let result = val.replace(/[^0-9]/gi, '');
-    return result;
+  checkNumber = (el) => {
+    let result = el.value.replace(/[^0-9]/gi, '');
+    if (!result || result === '0') {
+      result = 1;
+      setTimeout(() => {
+        el.select();
+      }, 10)
+    }
+
+    return parseInt(result, 10);
   }
 
   onChangeData = (e) => {
@@ -37,33 +44,37 @@ export class InputContainer extends Component {
 
     if (e.target.classList.contains('list-items')) {
       this.setState({
-        listItems: this.checkNumber(e.target.value)
+        listItems: this.checkNumber(e.target)
       });
     }
 
     if (e.target.classList.contains('min-length')) {
-      let val = this.checkNumber(e.target.value);
-      val = val > this.state.maxLength ? this.state.maxLength : val;
+      let val = this.checkNumber(e.target);
+      let correctMax = val > this.state.maxLength ? val : parseInt(this.state.maxLength, 10);
       this.setState({
-        minLength: val
+        minLength: val,
+        maxLength: correctMax
       });
     }
 
     if (e.target.classList.contains('max-lenght')) {
+      let val = this.checkNumber(e.target);
+      let correctMin = val < this.state.minLength ? val : parseInt(this.state.minLength, 10);
       this.setState({
-        maxLength: this.checkNumber(e.target.value)
+        maxLength: val,
+        minLength: correctMin
       });
     }
 
     if (e.target.classList.contains('width')) {
       this.setState({
-        width: this.checkNumber(e.target.value)
+        width: this.checkNumber(e.target)
       });
     }
 
     if (e.target.classList.contains('height')) {
       this.setState({
-        height: this.checkNumber(e.target.value)
+        height: this.checkNumber(e.target)
       });
     }
   }
@@ -78,6 +89,7 @@ export class InputContainer extends Component {
 
     if (this.state.type === 'ul' || this.state.type === 'ol') {
       list = <Input
+            disabled={this.props.isDisabled}
             type="text"
             typeClass="list-items"
             change={this.onChangeData}
@@ -108,6 +120,7 @@ export class InputContainer extends Component {
     if (this.state.type !== 'image') {
       minMax = [
           <Input
+            disabled={this.props.isDisabled}
             key="min-input"
             type="text"
             typeClass="min-length"
@@ -116,6 +129,7 @@ export class InputContainer extends Component {
             placeholder="Min number of words"
             label="Min number of words"/>,
           <Input
+            disabled={this.props.isDisabled}
             key="max-input"
             type="text"
             typeClass="max-lenght"
@@ -149,9 +163,8 @@ export class InputContainer extends Component {
       ]
     }
 
-    return (
-      <div className="lorem-block">
-        <div className="lorem-block-items">
+    return [
+        <div key="lorem-block-items" className="lorem-block-items">
           <Select
             label="Element"
             classList={classList}
@@ -163,14 +176,14 @@ export class InputContainer extends Component {
           {header}
           {minMax}
           {imgSizes}
-        </div>
-        <div className="buttons-wrapper">
+        </div>,
+        <div key="buttons-wrapper" className="buttons-wrapper">
           <button className="button" onClick={this.addItem}>Add Element</button>
-          <button className="button" onClick={this.props.createAll}>Create All</button>
+          <button className="button" onClick={this.props.removeLast}>Remove Last Added</button>
+          <button className="button add-all" onClick={this.props.createAll}>Create All</button>
           <button className="button clear" onClick={this.props.clearItems}>Clear All</button>
         </div>
-      </div>
-    );
+    ];
   }
 }
 
