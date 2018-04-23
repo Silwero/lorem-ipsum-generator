@@ -1,7 +1,7 @@
 import React from 'react';
 const loremIpsum = require('lorem-ipsum');
 
-const createText = (conf, additionalEl = {}) => {
+const createText = (conf, additionalElements = {}) => {
   let result = loremIpsum(conf);
   const elementTextLength = {
     units: 'sentences',
@@ -9,21 +9,12 @@ const createText = (conf, additionalEl = {}) => {
     sentenceUpperBound: 5
   }
 
-  let additionalElements = {
-    ...additionalEl
-  }
+  console.log(conf);
 
   let randomInteger = (min, max) => {
     var rand = min - 0.5 + Math.random() * (max - min + 1)
     rand = Math.round(rand);
-    return rand * rand;
-  }
-
-  if (additionalElements.isCreateAll) {
-    for (let prop in additionalElements) {
-      additionalElements[prop] = randomInteger(0, 1);
-    }
-    console.log(additionalElements);
+    return rand;
   }
 
   let insertElement = (string, element, revertSpace) => {
@@ -47,44 +38,27 @@ const createText = (conf, additionalEl = {}) => {
     return splitString;
   }
 
-  if (additionalElements.sup) {
-    let element = <sup key="sup">sup </sup>
-    result = insertElement(result, element, true);
-  }
-
-  if (additionalElements.sub) {
-    let element = <sub key="sub">sup </sub>
-    result = insertElement(result, element, true);
-  }
-
-  if (additionalElements.strong) {
-    let element = <strong key="strong">{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </strong>
-    result = insertElement(result, element);
-  }
-
-  if (additionalElements.abbr) {
-    let element = <abbr title="Abbreviation" key="abbr">{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </abbr>
-    result = insertElement(result, element);
-  }
-
-  if (additionalElements.a) {
-    let element = <a href="http://example.com" key="a">{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </a>
-    result = insertElement(result, element);
-  }
-
-  if (additionalElements.em) {
-    let element = <em key="em">{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </em>
-    result = insertElement(result, element);
-  }
-
-  if (additionalElements.b) {
-    let element = <b key="b">{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </b>
-    result = insertElement(result, element);
-  }
-
-  if (additionalElements.i) {
-    let element = <i key="i">{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </i>
-    result = insertElement(result, element);
+  for (let el in additionalElements) {
+    if (additionalElements[el]) {
+      let TagName = el;
+      let element;
+      if (el === 'sup' || el === 'sub') {
+        element = <TagName key={el}>{el} </TagName>;
+        result = insertElement(result, element, true);
+      } else {
+        switch(el) {
+          case 'a':
+            element = <a href="http://example.com" key={el}>{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </a>;
+            break;
+          case 'abbr':
+            element = <abbr title="Abbreviation" key={el}>{loremIpsum({units: 'sentences', sentenceLowerBound: 1, sentenceUpperBound: 1}).toLowerCase().replace(/\./gi, '')} </abbr>;
+            break;
+          default:
+            element = <TagName key={el}>{loremIpsum(elementTextLength).toLowerCase().replace(/\./gi, '')} </TagName> ;
+        }
+        result = insertElement(result, element);
+      }
+    }
   }
 
   return result;

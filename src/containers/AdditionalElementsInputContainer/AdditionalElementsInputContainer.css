@@ -14,3 +14,25 @@
 .additional-elements > div {
   flex: 0 1 33.3333%;
 }
+
+.additional-elements .button-wrapper {
+  display: flex;
+  flex: 1 1 100%;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.additional-elements .button-wrapper .button {
+  border-bottom: 1px solid #000;
+
+}
+
+.additional-elements .button-wrapper .button:last-child {
+  border-left: 0;
+}
+
+@media (max-width: 767px) {
+  .additional-elements > div {
+    flex: 1 1 50%;
+  }
+}

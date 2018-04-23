@@ -1,140 +1,113 @@
 import React from 'react';
 
-const loremIpsum = require('lorem-ipsum');
+import Paragraph from '../Paragraph';
+import Blockquote from '../Blockquote';
+import Header from '../Header';
+import Ul from '../Ul';
+import Ol from '../Ol';
+import createLi from '../Li';
+import Image from '../Image';
+import Table from '../Table';
 
-const allElements = () => {
-  let items = {};
+import createText from '../../functionalComponents/CreateText/CreateText';
+
+const allElements = (elementsList, additionalElements) => {
+  let items = [];
+
+  let generateText = (min, max, addEl = additionalElements) => {
+
+    return createText({
+      units: 'sentences',
+      sentenceLowerBound: min,
+      sentenceUpperBound: max
+    }, addEl);
+  };
+
+  let randomInteger = (min, max) => {
+    var rand = min - 0.5 + Math.random() * (max - min + 1)
+    rand = Math.round(rand);
+    return rand;
+  }
 
   let generateRandomKey = () => {
     return Math.random().toString(36).substr(2, 9);
-  }
+  };
 
-  items.h1 = <h1 key={generateRandomKey()}>{loremIpsum({
-    units: 'sentences',
-    sentenceLowerBound: 3,
-    sentenceUpperBound: 10
-  })}</h1>
+  let createElement = (el, innerElements) => {
+    let element;
 
-  items.h2 = <h2 key={generateRandomKey()}>{loremIpsum({
-    units: 'sentences',
-    sentenceLowerBound: 3,
-    sentenceUpperBound: 10
-  })}</h2>
-
-  items.h3 = <h3 key={generateRandomKey()}>{loremIpsum({
-    units: 'sentences',
-    sentenceLowerBound: 3,
-    sentenceUpperBound: 10
-  })}</h3>
-
-  items.h4 = <h4 key={generateRandomKey()}>{loremIpsum({
-    units: 'sentences',
-    sentenceLowerBound: 3,
-    sentenceUpperBound: 10
-  })}</h4>
-
-  items.h5 = <h5 key={generateRandomKey()}>{loremIpsum({
-    units: 'sentences',
-    sentenceLowerBound: 3,
-    sentenceUpperBound: 10
-  })}</h5>
-
-  items.h6 = <h6 key={generateRandomKey()}>{loremIpsum({
-    units: 'sentences',
-    sentenceLowerBound: 3,
-    sentenceUpperBound: 10
-  })}</h6>
-
-  items.paragraph1 = <p key={generateRandomKey()}>
-    Lorem ipsum dolor sit amet? <strong>strong text example</strong>. Expedita facilis accusamus sed esse aperiam, maiores libero modi, ab maxime aliquid, fugiat optio. Pariatur non asperiores, sint, <i>tenetur sed voluptatum illum beatae</i>.
-  </p>
-
-  items.paragraph2 = <p key={generateRandomKey()}>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad, sit quia quas, veniam id et laudantium necessitatibus? <a href="http://example.com">link text example</a>. Expedita facilis accusamus sed esse aperiam, maiores <em>libero modi</em>, ab maxime aliquid, fugiat optio. Pariatur non asperiores.
-  </p>
-
-  items.paragraph3 = <p key={generateRandomKey()}>
-    Lorem ipsum dolor sit amet<sup>sup text</sup>, consectetur adipisicing elit. Laboriosam est placeat culpa<sub>sub text</sub>. Nostrum natus ad alias, architecto beatae omnis cum illum deserunt <abbr title="Abbreviation">ABBR</abbr> molestias quidem earum magnam, consectetur sint!
-  </p>
-
-  items.img = <img key={generateRandomKey()} src={"http://placehold.it/600x300"} alt="Alt text"/>
-
-  const randomPaaragraph = () => (
-    <p key={generateRandomKey()}>
-      {loremIpsum({
-        units: 'sentences',
-        sentenceLowerBound: 20,
-        sentenceUpperBound: 60
-      })}
-    </p>
-  );
-
-  items.ul = <ul key={generateRandomKey()}>
-    <li>Lorem ipsum dolor sit amet, 572<sup>5</sup> consectetur adipisicing elit. Aspernatur, tenetur.</li>
-    <li>Lorem ipsum dolor sit amet, <em>consectetur adipisicing elit.</em> Quisquam velit saepe reprehenderit corporis excepturi quod sit ut explicabo fuga illo placeat nemo ipsam suscipit eum maxime consectetur eos, nam cumque.</li>
-    <li>{
-      loremIpsum({
-        units: 'sentences',
-        sentenceLowerBound: 3,
-        sentenceUpperBound: 20
-      })
-    }</li>
-    <li>Lorem ipsum dolor sit amet, consectetur<sub>"subscript" text</sub> adipisicing elit. Quibusdam cumque reiciendis fuga amet quae magni, cum, eos nobis iusto alias. Non, ab reiciendis eaque vero neque similique aut quaerat. Sint?</li>
-  </ul>
-
-
-  items.ol = <ol key={generateRandomKey()}>
-    <li>Lorem <b>ipsum dolor sit amet</b>, consectetur <abbr title="Abbreviation">ABBR</abbr> adipisicing elit. Quos, quas!</li>
-    <li>{
-      loremIpsum({
-        units: 'sentences',
-        sentenceLowerBound: 3,
-        sentenceUpperBound: 30
-      })
-    }</li>
-    <li><i>Lorem ipsum dolor sit amet, <a href="http://example.com">consectetur adipisicing</a> elit. Eligendi ipsam accusamus cum accusantium adipisci nulla itaque, <strong>molestiae earum</strong> dolores nemo?</i></li>
-    <li>{
-      loremIpsum({
-        units: 'sentences',
-        sentenceLowerBound: 3,
-        sentenceUpperBound: 10
-      })
-    }</li>
-  </ol>
-
-  items.blockquote = <blockquote key={generateRandomKey()}>
-    {
-      loremIpsum({
-        units: 'sentences',
-        sentenceLowerBound: 20,
-        sentenceUpperBound: 50
-      })
+    switch(el) {
+      case 'h1' :
+        element = <Header headerSize={el} text={generateText(2, 10, {})} key={generateRandomKey()} />;
+        break;
+      case 'h2' :
+        element = <Header headerSize={el} text={generateText(2, 10, {})} key={generateRandomKey()} />;
+        break;
+      case 'h3' :
+        element = <Header headerSize={el} text={generateText(2, 10, {})} key={generateRandomKey()} />;
+        break;
+      case 'h4' :
+        element = <Header headerSize={el} text={generateText(2, 10, {})} key={generateRandomKey()} />;
+        break;
+      case 'h5' :
+        element = <Header headerSize={el} text={generateText(2, 10, {})} key={generateRandomKey()} />;
+        break;
+      case 'h6' :
+        element = <Header headerSize={el} text={generateText(2, 10, {})} key={generateRandomKey()} />;
+        break;
+      case 'paragraph':
+        element = <Paragraph text={generateText(15, 70, innerElements)} key={generateRandomKey()} />
+        break;
+      case 'blockquote':
+        element = <Blockquote text={generateText(15, 70, innerElements)} key={generateRandomKey()} />
+        break;
+      case 'image':
+        element = <Image key={generateRandomKey()} width={randomInteger(400, 1920)}  height={randomInteger(150, 800)} />
+        break;
+      case 'ul':
+        element = <Ul key={generateRandomKey()} items={createLi(undefined, innerElements)}/>
+        break;
+      case 'ol':
+        element = <Ol key={generateRandomKey()} items={createLi(undefined, innerElements)}/>
+        break;
+      case 'table':
+        element = <Table key={generateRandomKey()} tr={4} td={2} th="Yes"/>
+        break;
+      default:
+        element = null;
     }
-  </blockquote>
 
-  return [
-    items.h1,
-    items.paragraph1,
-    randomPaaragraph(),
-    items.h2,
-    items.paragraph2,
-    items.ul,
-    items.h3,
-    items.paragraph3,
-    items.h4,
-    randomPaaragraph(),
-    items.ol,
-    randomPaaragraph(),
-    items.blockquote,
-    randomPaaragraph(),
-    items.img,
-    randomPaaragraph(),
-    items.h5,
-    randomPaaragraph(),
-    items.h6,
-    randomPaaragraph(),
-    randomPaaragraph()
-  ];
+    return element;
+  };
+
+  let numberOfAddedEl = Object.keys(additionalElements); // Number of elements to be inserted
+  let numberOfPlaceToInsert = 0; // Number of blocks where elements can be inserted
+
+  elementsList.forEach((el) => {
+    if (el === 'paragraph' || el === 'blockquote' || el === 'ul' || el === 'blockquote' || el === 'ol') {
+      numberOfPlaceToInsert++;
+    }
+  });
+
+  items = elementsList.map(el => {
+    let insertElements = {};
+    if (el === 'paragraph' || el === 'blockquote' || el === 'ul' || el === 'blockquote' || el === 'ol') {
+      let i = Math.ceil((numberOfAddedEl.length) / numberOfPlaceToInsert);
+
+      if (numberOfAddedEl.length) {
+        while (i > 0) {
+          let elPos = randomInteger(0, numberOfAddedEl.length - 1);
+          insertElements[numberOfAddedEl[elPos]] = true;
+          numberOfAddedEl.splice(elPos, 1);
+          i--;
+        }
+      }
+      numberOfPlaceToInsert--;
+    }
+    return createElement(el, insertElements);
+  });
+
+  return items;
 }
 
 export default allElements;

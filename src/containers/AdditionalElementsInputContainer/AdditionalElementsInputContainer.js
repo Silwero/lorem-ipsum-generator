@@ -21,6 +21,10 @@ const additionalElementsInputContainer = (props) => {
 
   return <div className="additional-elements">
     <p>Selecting each item will increase the size of the text</p>
+    <div className="button-wrapper">
+      <button className="button" onClick={props.check}>Check All</button>
+      <button className="button" onClick={props.uncheck}>Uncheck All</button>
+    </div>
     {elements}
   </div>
 };

@@ -7,8 +7,9 @@ import Header from './components/Outputs/Header';
 import Ul from './components/Outputs/Ul';
 import Ol from './components/Outputs/Ol';
 import createLi from './components/Outputs/Li';
+import Table from './components/Outputs/Table';
 import Image from './components/Outputs/Image';
-import allElements from './components/Outputs/AllElements/AllElementsNew';
+import allElements from './components/Outputs/AllElements/AllElements';
 
 import Mark from './components/functionalComponents/mark/mark';
 import createText from './components/functionalComponents/CreateText/CreateText';
@@ -20,8 +21,8 @@ class App extends Component {
   state = {
     items: [],
     copyed: false,
-    elementsList: ['paragraph', 'ul', 'ol', 'blockquote', 'header', 'image'],
-    createAllList: ['h1', 'paragraph', 'ul', 'h2', 'blockquote', 'paragraph', 'h3', 'paragraph', 'image', 'paragraph', 'h4', 'paragraph', 'h5', 'paragraph', 'ol', 'h6', 'paragraph' ],
+    elementsList: ['paragraph', 'ul', 'ol', 'blockquote', 'header', 'image', 'table'],
+    createAllList: ['h1', 'paragraph', 'ul', 'h2', 'blockquote', 'paragraph', 'h3', 'paragraph', 'image', 'table', 'paragraph', 'h4', 'paragraph', 'h5', 'paragraph', 'ol', 'h6', 'paragraph' ],
     elementsSwowed: false,
     elementsHighlighted: false,
     additionalElements: {
@@ -32,9 +33,20 @@ class App extends Component {
       sup: false,
       sub: false,
       b: false,
-      a: false
+      a: false,
+      cite: false,
+      code: false,
+      ins: false,
+      kbd: false,
+      mark: false,
+      s: false,
+      samp: false,
+      small: false,
+      time: false,
+      q: false,
+      u: false,
+      var: false
     },
-    isDisabledCounters: false,
     isImage: false
   }
 
@@ -75,10 +87,15 @@ class App extends Component {
           sentenceLowerBound: item.minLength,
           sentenceUpperBound: item.maxLength
         }, this.state.additionalElements);
-        if (text === '.') {
-          text = "Lorem"
-        }
         newEl = <Header key={item.id} headerSize={item.headerSize} text={text} />;
+        break;
+      case 'table':
+        text = createText({
+          units: 'sentences',
+          sentenceLowerBound: item.minLength,
+          sentenceUpperBound: item.maxLength
+        }, this.state.additionalElements);
+        newEl = <Table key={item.id} tr={item.tr} td={item.td} th={item.th} text={text} />;
         break;
       case 'ul':
         const ulLi = createLi(item, this.state.additionalElements);
@@ -141,6 +158,7 @@ class App extends Component {
     this.setState({items: newItems}, () => {
       this.pastToCopy();
     });
+    this.checkAllAdditionalElements();
   }
 
   showMarkToggle = () => {
@@ -179,6 +197,26 @@ class App extends Component {
     });
   }
 
+  checkAllAdditionalElements = () => {
+    let newAddEl = {}
+
+    for (let prop in this.state.additionalElements) {
+      newAddEl[prop] = true;
+    }
+
+    this.setState({additionalElements: newAddEl});
+  }
+
+  uncheckAllAdditionalElements = () => {
+    let newAddEl = {}
+
+    for (let prop in this.state.additionalElements) {
+      newAddEl[prop] = false;
+    }
+
+    this.setState({additionalElements: newAddEl});
+  }
+
   render() {
     let output = !this.state.items.length ?
       <p style={{textAlign: 'center'}}>No elements added</p> :
@@ -197,7 +235,6 @@ class App extends Component {
     }
 
     if (this.state.elementsHighlighted && this.state.items.length) {
-      console.log(this.state.items.length);
       showedClasses += ' show-highlighted';
     }
 
@@ -209,8 +246,19 @@ class App extends Component {
           <div className="row">
             <div className="col input-container">
               <div className="lorem-block">
-                <InputContainer isDisabled={this.state.isDisabledCounters} createAll={this.createAll} removeLast={this.removeLast} elementsList={this.state.elementsList} clearItems={this.clearElements} addItem={(item) => this.addItem(item)} />
-                <AdditionalElementsInputContainer isImage={this.state.isImage} change={this.toggleAdditionalAdded} elements={this.state.additionalElements} />
+                <InputContainer
+                  isDisabled={this.state.isDisabledCounters}
+                  createAll={this.createAll}
+                  removeLast={this.removeLast}
+                  elementsList={this.state.elementsList}
+                  clearItems={this.clearElements}
+                  addItem={(item) => this.addItem(item)} />
+                <AdditionalElementsInputContainer
+                  check={this.checkAllAdditionalElements}
+                  uncheck={this.uncheckAllAdditionalElements}
+                  isImage={this.state.isImage}
+                  change={this.toggleAdditionalAdded}
+                  elements={this.state.additionalElements} />
               </div>
             </div>
             <div className="col output-container">

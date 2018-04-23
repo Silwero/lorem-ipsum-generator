@@ -14,7 +14,10 @@ export class InputContainer extends Component {
     maxLength: 50,
     width: 300,
     height: 100,
-    id: 0
+    id: 0,
+    tr: 3,
+    td: 4,
+    th: 'No'
   }
 
   checkNumber = (el) => {
@@ -25,6 +28,8 @@ export class InputContainer extends Component {
         el.select();
       }, 10)
     }
+
+    if (!result || result >= 9999) result = 9999;
 
     return parseInt(result, 10);
   }
@@ -77,6 +82,24 @@ export class InputContainer extends Component {
         height: this.checkNumber(e.target)
       });
     }
+
+    if (e.target.classList.contains('th')) {
+      this.setState({
+        th: e.target.value
+      });
+    }
+
+    if (e.target.classList.contains('rows')) {
+      this.setState({
+        tr: this.checkNumber(e.target)
+      });
+    }
+
+    if (e.target.classList.contains('cols')) {
+      this.setState({
+        td: this.checkNumber(e.target)
+      });
+    }
   }
 
   addItem = () => {
@@ -89,7 +112,6 @@ export class InputContainer extends Component {
 
     if (this.state.type === 'ul' || this.state.type === 'ol') {
       list = <Input
-            disabled={this.props.isDisabled}
             type="text"
             typeClass="list-items"
             change={this.onChangeData}
@@ -111,16 +133,10 @@ export class InputContainer extends Component {
 
     let classList = "item-input";
 
-    if (!(list || header)) {
-      classList +=  " full-width"
-    }
-
     let minMax = null;
-
-    if (this.state.type !== 'image') {
+    if (this.state.type !== 'image' && this.state.type !== 'table') {
       minMax = [
           <Input
-            disabled={this.props.isDisabled}
             key="min-input"
             type="text"
             typeClass="min-length"
@@ -129,7 +145,6 @@ export class InputContainer extends Component {
             placeholder="Min number of words"
             label="Min number of words"/>,
           <Input
-            disabled={this.props.isDisabled}
             key="max-input"
             type="text"
             typeClass="max-lenght"
@@ -140,8 +155,36 @@ export class InputContainer extends Component {
       ]
     }
 
-    let imgSizes = null;
+    let table = null;
+    if (this.state.type === 'table') {
+      table = [
+          <Select
+            elementType="th"
+            change={this.onChangeData}
+            val={this.state.th}
+            label="Table header"
+            elementsList={['Yes', 'No']}
+            classList="item-input"/>,
+          <Input
+            key="row-input"
+            type="text"
+            typeClass="rows"
+            change={this.onChangeData}
+            val={this.state.tr}
+            placeholder="Rows"
+            label="Number of rows"/>,
+          <Input
+            key="col-input"
+            type="text"
+            typeClass="cols"
+            change={this.onChangeData}
+            val={this.state.td}
+            placeholder="Cols"
+            label="Number of cols"/>
+      ]
+    }
 
+    let imgSizes = null;
     if (this.state.type === 'image') {
       imgSizes = [
           <Input
@@ -163,6 +206,11 @@ export class InputContainer extends Component {
       ]
     }
 
+
+    if (!(list || header || table)) {
+      classList +=  " full-width"
+    }
+
     return [
         <div key="lorem-block-items" className="lorem-block-items">
           <Select
@@ -176,6 +224,7 @@ export class InputContainer extends Component {
           {header}
           {minMax}
           {imgSizes}
+          {table}
         </div>,
         <div key="buttons-wrapper" className="buttons-wrapper">
           <button className="button" onClick={this.addItem}>Add Element</button>
